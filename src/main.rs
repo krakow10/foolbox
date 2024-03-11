@@ -1,22 +1,22 @@
-use binrw::BinWrite;
-
-#[binrw::binrw]
-#[brw(little)]
-pub struct Header2{
-	sizeof_header:u16,//size of this struct...
-	sizeof_vertex:u8,
-	sizeof_face:u8,
+struct Circle{
+	radius:f32,
 }
-
-fn main() {
-	let h=Header2{
-		sizeof_header:12,
-		sizeof_vertex:40,
-		sizeof_face:12,
-	};
-	let mut buf=Vec::new();
-	let mut c=std::io::Cursor::new(&mut buf);
-	h.write_le(&mut c).unwrap();
-	println!("{:?}",c);
-	println!("hi");
+impl Circle{
+	fn new(radius:f32)->Self{
+		Self{
+			radius
+		}
+	}
+	fn get_area(&self)->f32{
+		std::f32::consts::PI*self.radius*self.radius
+	}
+	fn get_circumference(&self)->f32{
+		std::f32::consts::TAU*self.radius
+	}
+}
+fn main(){
+	let c=Circle::new(6.0);
+	println!("The radius is {}",c.radius);
+	println!("The area is {}",c.get_area());
+	println!("The circumference is {}",c.get_circumference());
 }
