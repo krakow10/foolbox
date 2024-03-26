@@ -1,6 +1,10 @@
 fn main(){
-	let mut a=1;
-	let mut b=2;
-	std::mem::swap(&mut a,&mut b);
-	println!("a={} b={}",a,b);
+	let t1=[1,3,5];
+	let t2=[2,4,6];
+	let t_final:Vec<u32>=t1
+	.into_iter()
+	.zip(t2.into_iter())
+	.flat_map(|(v0,v1)| [v0,v1].into_iter())
+	.collect();
+	println!("{:?}",t_final);
 }
