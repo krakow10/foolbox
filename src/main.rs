@@ -1,10 +1,10 @@
+
 fn main(){
-	let t1=[1,3,5];
-	let t2=[2,4,6];
-	let t_final:Vec<u32>=t1
-	.into_iter()
-	.zip(t2)
-	.flat_map(|(v0,v1)| [v0,v1])
-	.collect();
-	println!("{:?}",t_final);
+	let mut s=String::from("hello");
+	let b=unsafe{s.as_bytes_mut()};
+  //if(97..123).contains(&b[0]){b[0]-=32;}
+  //if 96<b[0]&&b[0]<123{b[0]-=32}
+  //if let 97..=122=b[0]{b[0]^=32}
+	b[0].make_ascii_uppercase();
+	println!("{}",s);
 }
