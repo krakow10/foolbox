@@ -1,11 +1,9 @@
-fn capitalize(s:&str)->String{
-	if s.len()==0{
-		return "".to_owned();
-	}
-	let a=s[0..1].to_uppercase();
-	let b=a+&s[1..];
-	b
-}
 fn main(){
-	println!("{}",capitalize(""));
+	let a;
+	let mut b = Box::new(0);// dynamic allocation
+	a = 4;
+	*b = 5;
+	let c = a + *b;
+	println!("{c}"); // prints 9
+	//b is dropped when the scope ends
 }
