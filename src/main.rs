@@ -1,23 +1,19 @@
+use std::collections::HashMap;
+
 fn main(){
-	//these values have the type &str which is called "string slice"
-	let words = ["cat","bat","rat","mat","that","chair","sat","me","at"];
-	let _at: Vec<&str> = 
-	words
-	//convert the words array into an iterator, consuming it
-	.into_iter()
-	//filter out values according to a function that returns true or false
-	.filter(|&word|{
-		if word.len()!=3{
-			//filter out words not length 3
-			return false;
-		}
-		match &word[1..3]{ //this operation is "slice"
-			"at"=>true,
-			//filter out words that don't have "at" at character positions 1..3 (non-inclusive range)
-			_=>false,
-		}
-	})
-	//collect the iterator into a Vec<&str>
-	.collect();
-	println!("filtered words {_at:?}"); // :? means debug print
+	//big ole string
+	let s = "the quick brown fox jumps over the lazy dog";
+	//create a hashmap, h variable is mutable
+	let mut h = HashMap::new();
+	//loop over string characters
+	for c in s.chars(){
+		//handy rust tool "Entry"
+		h.entry(c)
+		//if the entry exists, add one to it
+		.and_modify(|v|*v+=1)
+		//otherwise, insert an entry for c and set it to 1
+		.or_insert(1);
+	}
+	//print out the hashmap via debug print
+	println!("{h:?}");
 }
