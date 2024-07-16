@@ -1,3 +1,10 @@
 fn main(){
-	let admins:std::collections::HashSet<u64>=[52250025,2349947797,5741161789,1383928418,147260781].into();
+	//create a hashmap
+	let mut h = std::collections::HashMap::new();
+
+	//insert a key-value pair
+	h.insert("key1","value1");
+
+	//access the value using the key
+	println!("{}",h["key1"]);// -> value1
 }
