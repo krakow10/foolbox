@@ -1,8 +1,14 @@
-const fn bool_to_byte(b: bool) -> u8 {
-    -(b as i8) as u8
-}
+fn main() {
+    let mut lines_list = vec!["line1", "line2", "line3", "line4"];
+    let mut it = lines_list.iter();
 
-fn main(){
-	println!("{}",bool_to_byte(true));
-	println!("{}",bool_to_byte(false));
+	it.next();
+	std::mem::drop(it);
+	lines_list.pop();
+	it=lines_list.iter();
+
+    // iterator still exists and can be used
+    for line in it {
+        println!("{}", line);
+    }
 }
