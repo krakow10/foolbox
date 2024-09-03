@@ -1,17 +1,8 @@
-const fn gcd(mut a:u128,mut b:u128)->u128{
-	while b!=0{
-		(a,b)=(b,a.rem_euclid(b));
-	};
-	a
-}
-
+const JUMP_TIME:f32=0.715588;//78/109
 fn main() {
-	const div:u128=10000000000000000000000u128;
-	const a:u128=1298374568127365872345u128;
-	const b:u128=8972318954342345623485972349500000u128;
-	const c:u128=gcd(a,b);
-	println!("{}",c);
-	println!("{}",a/c);
-	println!("{}",b/c);
-	println!("{}",c as f64/div as f64);
+	let (i,f)=(1..200).map(|i|(i,JUMP_TIME*i as f32)).min_by_key(|&(_,f0)|{
+		let fr=f0.fract();
+		(fr.min(1.0-fr)*(1u64<<32) as f32) as u32
+	}).unwrap();
+	println!("min index: {i}\nmin value:{f}");
 }
