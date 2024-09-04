@@ -81,16 +81,21 @@ impl std::ops::DerefMut for Array2d<3,3>{
 
 fn main(){
 	let mut v=Array::new([1.0,2.0,3.0]);
-	let dotty=v.dot(v);
+
+	// const-generic fixed-size vector dot
+	let d=v.dot(v);
+	println!("dot={d}");
+
 	v.x*=5.0;//wow
-	println!("dot={dotty}");
 	println!("v.x={}",v.x);//wow!
 
 	let mut m=Array2d::new([[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0]]);
-	let mdotty=m.dot(m);
+
+	let md=m.dot(m);
+	println!("mat mul xx={}",md.x_axis.x);
+
 	m.x_axis=*Array::new([-1.0,-2.0,-3.0]);
 	m.x_axis.x=0.5;
-	println!("mat mul xx={}",mdotty.x_axis.x);
 	println!("m.x_axis.x={}",m.x_axis.x);
 	println!("m.x_axis.y={}",m.x_axis.y);
 }
