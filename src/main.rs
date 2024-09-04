@@ -3,13 +3,11 @@
 #[derive(Clone,Copy)]
 struct Array<const N:usize>([f32;N]);
 impl<const N:usize> Array<N>{
+	const fn new(value:[f32;N])->Self{
+		Self(value)
+	}
 	fn dot(self,other:Self)->f32{
 		self.0.into_iter().zip(other.0).map(|(a,b)|a*b).sum()
-	}
-}
-impl<const N:usize> From<[f32;N]> for Array<N>{
-	fn from(value:[f32;N])->Self{
-		Self(value)
 	}
 }
 
@@ -44,6 +42,9 @@ impl std::ops::DerefMut for Array<3>{
 #[derive(Clone,Copy)]
 struct Array2d<const X:usize,const Y:usize>([[f32;Y];X]);
 impl<const X:usize,const Y:usize> Array2d<X,Y>{
+	const fn new(value:[[f32;Y];X])->Self{
+		Self(value)
+	}
 	fn dot<const Z:usize>(self,other:Array2d<Y,Z>)->Array2d<X,Z>{
 		let mut tr=[[0f32;Y];Z];
 		for y in 0..Y{
@@ -56,11 +57,6 @@ impl<const X:usize,const Y:usize> Array2d<X,Y>{
 				Array(axis).dot(Array(trax))
 			)
 		))
-	}
-}
-impl<const X:usize,const Y:usize> From<[[f32;Y];X]> for Array2d<X,Y>{
-	fn from(value:[[f32;Y];X])->Self{
-		Self(value)
 	}
 }
 
@@ -84,15 +80,15 @@ impl std::ops::DerefMut for Array2d<3,3>{
 }
 
 fn main(){
-	let mut v=Array::from([1.0,2.0,3.0]);
+	let mut v=Array::new([1.0,2.0,3.0]);
 	let dotty=v.dot(v);
 	v.x*=5.0;//wow
 	println!("dot={dotty}");
 	println!("v.x={}",v.x);//wow!
 
-	let mut m=Array2d::from([[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0]]);
+	let mut m=Array2d::new([[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0]]);
 	let mdotty=m.dot(m);
-	m.x_axis=*Array::from([-1.0,-2.0,-3.0]);
+	m.x_axis=*Array::new([-1.0,-2.0,-3.0]);
 	m.x_axis.x=0.5;
 	println!("mat mul xx={}",mdotty.x_axis.x);
 	println!("m.x_axis.x={}",m.x_axis.x);
