@@ -45,13 +45,21 @@ impl std::ops::DerefMut for MagicVector3{
 	}
 }
 
+impl From<[f32;3]> for MagicVector3{
+	fn from(value:[f32;3])->Self{
+		Self{
+			array:Array(value)
+		}
+	}
+}
+
 // Mat<3,Vec<2>>.dot(M)
 // M.x_axis
 
 fn main(){
-	let mut v=MagicVector3{array:Array([1.0,2.0,3.0])};
+	let mut v=MagicVector3::from([1.0,2.0,3.0]);
 	let dotty=v.dot(v);
-	v.x=5.0;
+	v.x*=5.0;//wow
 	println!("dot={dotty}");
 	println!("v.x={}",v.x);//wow!
 }
