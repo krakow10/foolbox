@@ -12,6 +12,11 @@ impl<const N:usize> Array<N>{
 		self.0.into_iter().zip(other.0).map(|(a,b)|a*b).sum()
 	}
 }
+impl<const N:usize> From<[f32;N]> for Array<N>{
+	fn from(value:[f32;N])->Self{
+		Self(value)
+	}
+}
 impl<const N:usize> Inner for Array<N>{
 	type Output = f32;
 	fn inner(self,rhs:Self)->Self::Output {
@@ -26,41 +31,15 @@ struct Vector3{
 	z:f32,
 }
 
-#[derive(Clone,Copy)]
-union MagicVector3 {
-	array:Array<3>,
-	named:Vector3,
-}
-
-impl MagicVector3{
-	fn dot(self,other:MagicVector3)->f32{
-		unsafe{
-			self.array.dot(other.array)
-		}
-	}
-}
-
-impl std::ops::Deref for MagicVector3{
+impl std::ops::Deref for Array<3>{
 	type Target=Vector3;
 	fn deref(&self)->&Self::Target{
-		unsafe{
-			&self.named
-		}
+		unsafe{std::mem::transmute(self)}
 	}
 }
-impl std::ops::DerefMut for MagicVector3{
+impl std::ops::DerefMut for Array<3>{
 	fn deref_mut(&mut self)->&mut Self::Target{
-		unsafe{
-			&mut self.named
-		}
-	}
-}
-
-impl From<[f32;3]> for MagicVector3{
-	fn from(value:[f32;3])->Self{
-		Self{
-			array:Array(value)
-		}
+		unsafe{std::mem::transmute(self)}
 	}
 }
 
@@ -90,6 +69,11 @@ impl<const X:usize,const Y:usize> Array2d<X,Y>{
 		))
 	}
 }
+impl<const X:usize,const Y:usize> From<[[f32;Y];X]> for Array2d<X,Y>{
+	fn from(value:[[f32;Y];X])->Self{
+		Self(value)
+	}
+}
 impl<const X:usize,const Y:usize,const Z:usize> Inner<Array2d<Y,Z>> for Array2d<X,Y>{
 	type Output = Array2d<X,Z>;
 	fn inner(self,rhs:Array2d<Y,Z>)->Self::Output {
@@ -98,62 +82,34 @@ impl<const X:usize,const Y:usize,const Z:usize> Inner<Array2d<Y,Z>> for Array2d<
 }
 
 #[derive(Clone,Copy)]
-struct Matrix3{
-	x_axis:MagicVector3,
-	y_axis:MagicVector3,
-	z_axis:MagicVector3,
+struct Matrix3<T>{
+	x_axis:T,
+	y_axis:T,
+	z_axis:T,
 }
 
-#[derive(Clone,Copy)]
-union MagicMatrix3 {
-	array:Array2d<3,3>,
-	named:Matrix3,
-}
-
-impl MagicMatrix3{
-	fn dot(self,other:MagicMatrix3)->MagicMatrix3{
-		MagicMatrix3{
-			array:unsafe{
-				self.array.dot(other.array)
-			}
-		}
-	}
-}
-
-impl std::ops::Deref for MagicMatrix3{
-	type Target=Matrix3;
+impl std::ops::Deref for Array2d<3,3>{
+	type Target=Matrix3<Vector3>;
 	fn deref(&self)->&Self::Target{
-		unsafe{
-			&self.named
-		}
+		unsafe{std::mem::transmute(self)}
 	}
 }
-impl std::ops::DerefMut for MagicMatrix3{
+impl std::ops::DerefMut for Array2d<3,3>{
 	fn deref_mut(&mut self)->&mut Self::Target{
-		unsafe{
-			&mut self.named
-		}
-	}
-}
-
-impl From<[[f32;3];3]> for MagicMatrix3{
-	fn from(value:[[f32;3];3])->Self{
-		Self{
-			array:Array2d(value)
-		}
+		unsafe{std::mem::transmute(self)}
 	}
 }
 
 fn main(){
-	let mut v=MagicVector3::from([1.0,2.0,3.0]);
+	let mut v=Array::from([1.0,2.0,3.0]);
 	let dotty=v.dot(v);
 	v.x*=5.0;//wow
 	println!("dot={dotty}");
 	println!("v.x={}",v.x);//wow!
 
-	let mut m=MagicMatrix3::from([[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0]]);
+	let mut m=Array2d::from([[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0]]);
 	let mdotty=m.dot(m);
-	m.x_axis=MagicVector3::from([-1.0,-2.0,-3.0]);
+	m.x_axis=*Array::from([-1.0,-2.0,-3.0]);
 	println!("mat mul xx={}",mdotty.x_axis.x);
 	println!("m.x_axis.x={}",m.x_axis.x);
 }
