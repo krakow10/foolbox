@@ -93,6 +93,8 @@ fn main(){
 	let mut m=Array2d::from([[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0]]);
 	let mdotty=m.dot(m);
 	m.x_axis=*Array::from([-1.0,-2.0,-3.0]);
+	m.x_axis.x=0.5;
 	println!("mat mul xx={}",mdotty.x_axis.x);
 	println!("m.x_axis.x={}",m.x_axis.x);
+	println!("m.x_axis.y={}",m.x_axis.y);
 }
