@@ -1,3 +1,8 @@
+trait Inner<Rhs=Self>{
+	type Output;
+	fn inner(self,rhs:Rhs)->Self::Output;
+}
+
 // Array-backed vector with named field access
 
 #[derive(Clone,Copy)]
@@ -5,6 +10,12 @@ struct Array<const N:usize>([f32;N]);
 impl<const N:usize> Array<N>{
 	fn dot(self,other:Self)->f32{
 		self.0.into_iter().zip(other.0).map(|(a,b)|a*b).sum()
+	}
+}
+impl<const N:usize> Inner for Array<N>{
+	type Output = f32;
+	fn inner(self,rhs:Self)->Self::Output {
+		self.dot(rhs)
 	}
 }
 
@@ -77,6 +88,12 @@ impl<const X:usize,const Y:usize> Array2d<X,Y>{
 				Array(axis).dot(Array(trax))
 			)
 		))
+	}
+}
+impl<const X:usize,const Y:usize,const Z:usize> Inner<Array2d<Y,Z>> for Array2d<X,Y>{
+	type Output = Array2d<X,Z>;
+	fn inner(self,rhs:Array2d<Y,Z>)->Self::Output {
+		self.dot(rhs)
 	}
 }
 
