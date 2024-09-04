@@ -37,13 +37,21 @@ impl std::ops::Deref for MagicVector3{
 		}
 	}
 }
+impl std::ops::DerefMut for MagicVector3{
+	fn deref_mut(&mut self)->&mut Self::Target{
+		unsafe{
+			&mut self.named
+		}
+	}
+}
 
 // Mat<3,Vec<2>>.dot(M)
 // M.x_axis
 
 fn main(){
-	let v=MagicVector3{array:Array([1.0,2.0,3.0])};
+	let mut v=MagicVector3{array:Array([1.0,2.0,3.0])};
 	let dotty=v.dot(v);
+	v.x=5.0;
 	println!("dot={dotty}");
 	println!("v.x={}",v.x);//wow!
 }
