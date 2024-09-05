@@ -12,6 +12,7 @@ impl<const N:usize> Array<N>{
 }
 
 #[derive(Clone,Copy)]
+#[repr(C)]
 struct Vector3{
 	x:f32,
 	y:f32,
@@ -61,6 +62,7 @@ impl<const X:usize,const Y:usize> Array2d<X,Y>{
 }
 
 #[derive(Clone,Copy)]
+#[repr(C)]
 struct Matrix3<T>{
 	x_axis:T,
 	y_axis:T,
