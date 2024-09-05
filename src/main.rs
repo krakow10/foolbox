@@ -1,8 +1,11 @@
-const JUMP_TIME:f32=0.715588;//78/109
+struct Five(u8);
+impl Default for Five{
+	fn default() -> Self {
+		Five(5)
+	}
+}
 fn main() {
-	let (i,f)=(1..200).map(|i|(i,JUMP_TIME*i as f32)).min_by_key(|&(_,f0)|{
-		let fr=f0.fract();
-		(fr.min(1.0-fr)*(1u64<<32) as f32) as u32
-	}).unwrap();
-	println!("min index: {i}\nmin value:{f}");
+	//arrays only implement default up to length 32 !?
+	let arr:[Five;32]=Default::default();
+	let arr:[Five;33]=Default::default();
 }
