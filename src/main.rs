@@ -1,11 +1,12 @@
-struct Five(u8);
-impl Default for Five{
-	fn default() -> Self {
-		Five(5)
-	}
-}
 fn main() {
-	//arrays only implement default up to length 32 !?
-	let arr:[Five;32]=Default::default();
-	let arr:[Five;33]=Default::default();
+	let mut h=ahash::AHashSet::new();
+
+	for a in 1..=u16::MAX{
+		for b in 1..=a{
+			let c=(a as u32)*(b as u32);
+			h.insert(c);
+		}
+	}
+
+	println!("{}",h.len());
 }
