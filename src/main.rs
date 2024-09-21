@@ -1,12 +1,3 @@
-fn a_function<'lua,T,F:mlua::UserDataFields<'lua,T>+?Sized>(fields:&mut F){}
-
-pub trait Composition<'lua,F>:Sized
-	where
-		F:mlua::UserDataFields<'lua,Self>+'lua,
-{
-	const COMPOSITION:&'lua [fn(&mut F)];
-}
-
 struct Unit{
 	referent:u128,
 }
@@ -14,26 +5,27 @@ struct Unit{
 struct Instance{
 	name:String,
 }
-impl Instance{}
-
-impl<'a,F> Composition<'a,F> for Instance
-where
-	F:mlua::UserDataFields<'a,Self>+'a{
-	const COMPOSITION:&'a [fn(&mut F)]=&[a_function];
+impl Instance{
+	fn add_fields<'lua,T,F:mlua::UserDataFields<'lua,T>+?Sized>(fields:&mut F){}
+}
+impl mlua::UserData for Instance{
+	fn add_fields<'lua,F:mlua::UserDataFields<'lua,Self>>(fields:&mut F){
+		Instance::add_fields(fields);
+	}
 }
 
-impl mlua::UserData for T
-{
-	fn add_fields<'lua,F>(fields:&mut F)
-	where
-			F:mlua::UserDataFields<'lua,Self>+'lua,
-			T:Composition<'lua,F>,
-	{
-		T::COMPOSITION.iter().for_each(|f|f(fields))
+struct DataModel{
+}
+impl DataModel{
+	fn add_fields<'lua,T,F:mlua::UserDataFields<'lua,T>+?Sized>(fields:&mut F){}
+}
+
+impl mlua::UserData for DataModel{
+	fn add_fields<'lua,F:mlua::UserDataFields<'lua,Self>>(fields:&mut F){
+		Instance::add_fields(fields);
+		DataModel::add_fields(fields);
 	}
 }
 
 fn main() {
-	let mut a=DataModel::new();
-	a=Lighting::new();
 }
