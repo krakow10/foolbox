@@ -1,5 +1,8 @@
 fn main() {
-	let is_negative=true;
-	let b=-(is_negative as i8);
-	println!("{b}");
+	let a=[false,true];
+	for x in a{
+		for y in a{
+			assert_eq!(x^y,x!=y);
+		}
+	}
 }
