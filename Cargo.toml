@@ -11,4 +11,4 @@ strip = true
 codegen-units = 1
 
 [dependencies]
-fixed_wide = { version = "0.1.0", path = "../../strafesnet/fixed_wide_vectors/fixed_wide" }
+fixed_wide = { version = "0.1.0", registry = "strafesnet" }

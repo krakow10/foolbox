@@ -4,22 +4,17 @@ version = 3
 
 [[package]]
 name = "bnum"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e31ea183f6ee62ac8b8a8cf7feddd766317adfb13ff469de57ce033efd6a790"
+checksum = "50202def95bf36cb7d1d7a7962cea1c36a3f8ad42425e5d2b71d7acb8041b5b8"
 
 [[package]]
 name = "fixed_wide"
 version = "0.1.0"
 dependencies = [
  "bnum",
- "fixed_wide_traits",
- "typenum",
+ "paste",
 ]
-
-[[package]]
-name = "fixed_wide_traits"
-version = "0.1.0"
 
 [[package]]
 name = "foolbox"
@@ -29,7 +24,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "typenum"
-version = "1.17.0"
+name = "paste"
+version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
+checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
