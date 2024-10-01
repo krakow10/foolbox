@@ -1,8 +1,4 @@
 fn main() {
-	let a=[false,true];
-	for x in a{
-		for y in a{
-			assert_eq!(x^y,x!=y);
-		}
-	}
+	let url=url::Url::parse("rbxassetid://127893612387?id=1");
+	println!("{url:?}");
 }

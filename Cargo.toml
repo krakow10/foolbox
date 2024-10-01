@@ -11,3 +11,4 @@ strip = true
 codegen-units = 1
 
 [dependencies]
+url = "2.5.2"
