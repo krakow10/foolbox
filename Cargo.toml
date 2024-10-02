@@ -11,4 +11,5 @@ strip = true
 codegen-units = 1
 
 [dependencies]
-fixed_wide = { version = "0.1.0", registry = "strafesnet" }
+fixed_wide = { version = "0.1.1", registry = "strafesnet" }
+rayon = "1.10.0"

@@ -1,10 +1,11 @@
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 fn main() {
-	let a=fixed_wide::types::I32F32::ONE*50;
-	let d=std::time::Instant::now();
-	let r=a.sqrt();
-	println!("t={:?}",d.elapsed());
-	println!("ans={}",r);
-	println!("ans={:#066b}",r.to_raw());
-	//0b0000000000000000000000000000011100010010001100011000000000000111
+	(0..u32::MAX).into_par_iter().for_each(|bits|{
+		let a=f32::from_bits(bits);
+		let b:Result<fixed_wide::types::I32F32,_>=a.try_into();
+		if b.is_err()&&bits%1351531==0{
+			println!("bits={bits}");
+		}
+	});
 }
