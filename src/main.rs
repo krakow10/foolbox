@@ -74,11 +74,20 @@ fn find_numbers_with_n_digits(n:u32)->(u32,u32){
 			// This is the value of `digit` of test_number
 			// For example when digit = 2, the calculation is
 			// value=(num/100)%10
+			//
 			// For example:
+			// when digit = 2 (100's digit)
 			// num = 6512
 			// num/100 = 65
 			// 65 % 10 = 5
 			// Successfully extracting the digit 5
+			//
+			// Example 2:
+			// when digit = 0 (1's digit)
+			// num = 6512
+			// num/1 = 6512
+			// 6512 % 10 = 2
+			// Successfully extracting the digit 2
 			let value=(test_number/10_u32.pow(digit))%10;
 
 			// Square it and add to sum
