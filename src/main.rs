@@ -132,11 +132,11 @@ fn main() {
 
 	let mut total_found=0;
 	let mut total_tested=0;
-	// for n in 1..5{
-		let (found,tested)=find_numbers_with_n_digits(3);
+	for n in 1..5{
+		let (found,tested)=find_numbers_with_n_digits(n);
 		total_found+=found;
 		total_tested+=tested;
-	// }
+	}
 
 	// write down the elapsed time
 	let time2=timer2.elapsed();
