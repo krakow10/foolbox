@@ -1,8 +1,14 @@
+use std::collections::HashMap;
+
 fn main() {
-	let a=[false,true];
-	for x in a{
-		for y in a{
-			assert_eq!(x^y,x!=y);
-		}
+	let mut h=HashMap::new();
+
+	let r=0..10;
+	for i in r{
+		h.entry(i%3)
+			.and_modify(|a|(*a)+=1)
+			.or_insert(0);
 	}
+
+	println!("{:?}",h);
 }
