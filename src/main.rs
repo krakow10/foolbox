@@ -1,14 +1,14 @@
-use std::collections::HashMap;
+use futures::StreamExt;
 
-fn main() {
-	let mut h=HashMap::new();
-
-	let r=0..10;
-	for i in r{
-		h.entry(i%3)
-			.and_modify(|a|(*a)+=1)
-			.or_insert(0);
-	}
-
-	println!("{:?}",h);
+#[tokio::main]
+async fn main(){
+	let list=[];
+	let yah=futures::stream::iter(list)
+	.map(|num:u32|async move{num+1})
+	.buffer_unordered(list.len())
+	.filter_map(|num|async move{Some(num)})
+	.collect::<Vec<u32>>();
+	println!("running future...");
+	let a=yah.await;
+	println!("future completed {:?}",a);
 }
