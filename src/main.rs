@@ -10,5 +10,7 @@ fn main() {
 			.or_insert(0);
 	}
 
+	let all_mut:Vec<_>=h.iter_mut().collect();
+
 	println!("{:?}",h);
 }
