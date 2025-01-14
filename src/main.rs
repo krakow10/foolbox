@@ -1,12 +1,3 @@
-// safety: I have no idea what I'm doing and this is potentially a recipe for disaster
-fn replace_with<T>(dest:&mut T,f:impl Fn(T)->T){
-	unsafe{
-		let peek=core::ptr::read(dest);
-		let result=f(peek);
-		core::ptr::write(dest,result);
-	}
-}
-
 // Some type that does not implement the Copy trait
 struct NotCopy;
 
@@ -29,7 +20,7 @@ impl Propagate{
 		}
 	}
 	fn propagate(&mut self){
-		replace_with(self,Self::transform);
+		replace_with::replace_with_or_abort(self,Self::transform);
 	}
 }
 
