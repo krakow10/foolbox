@@ -1,8 +1,8 @@
+use rand::Rng;
 
 fn main(){
-	let a:Vec<u8>=(0..16).collect();
-	let b=b"0123456789abcdef";
-	for i in 0..16{
-		println!("{} lhs={:08b} rhs={:08b}",char::from(b[i]),a[i],b[i]);
+	let mut rng=rand::thread_rng();
+	for _ in 0..100{
+		println!("{:?}",f32::from_bits(rng.gen()));
 	}
 }
