@@ -1,5 +1,5 @@
 fn main(){
-	let data=include_bytes!("../385416572.meshdata");
+	let data=include_bytes!("../meshdata/385416572.meshdata");
 	let first=&data[0..23];
 	println!("first {first:?}");
 	let mut count=0;
