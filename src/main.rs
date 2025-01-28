@@ -1,14 +1,14 @@
-fn main(){
-	let data=include_bytes!("../meshdata/15124417947_5.meshdata");
-	for columns in 4..84{
-		let rows=data.len()/columns;
-		let mut im=image::ImageBuffer::<image::Luma<u8>,_>::new(columns as u32,rows as u32);
-		for (y,chunk) in data.chunks_exact(columns).enumerate(){
-			for (x,b) in chunk.iter().enumerate(){
-				im.put_pixel(x as u32,y as u32,image::Luma([*b]));
-			}
-		}
-		let mut file=std::fs::File::create(format!("meshdata{columns}.png")).unwrap();
-		im.write_to(&mut file,image::ImageFormat::Png).unwrap();
+pub const OBFUSCATION_NOISE_CYCLE_XOR:[u8;31]=[86,46,110,88,49,32,48,4,52,105,12,119,12,1,94,0,26,96,55,105,29,82,43,7,79,36,89,101,83,4,122];
+fn reversible_obfuscate(offset:u64,buf:&mut [u8]){
+	const LEN:u64=OBFUSCATION_NOISE_CYCLE_XOR.len() as u64;
+	for (i,b) in buf.iter_mut().enumerate(){
+		*b^=OBFUSCATION_NOISE_CYCLE_XOR[((offset+i as u64)%LEN) as usize];
 	}
+}
+fn main(){
+	let data=include_bytes!("../meshdata/4500696697_4.meshdata");
+	let abc=data.len()-12;
+	let mut datadata=data[abc..].to_vec();
+	//reversible_obfuscate(abc as u64,&mut datadata);
+	println!("{datadata:?}");
 }
