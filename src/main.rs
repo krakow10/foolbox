@@ -6,9 +6,8 @@ fn reversible_obfuscate(offset:u64,buf:&mut [u8]){
 	}
 }
 fn main(){
-	let data=include_bytes!("../meshdata/4500696697_4.meshdata");
-	let abc=data.len()-12;
-	let mut datadata=data[abc..].to_vec();
-	//reversible_obfuscate(abc as u64,&mut datadata);
+	let data=b"CSGMDL\x04\0\0\0";
+	let mut datadata=*data;
+	reversible_obfuscate(0,&mut datadata);
 	println!("{datadata:?}");
 }
