@@ -1,64 +1,13 @@
-struct Node {
-    value: i32,
-    left: Option<Box<Node>>,
-    right: Option<Box<Node>>,
-}
-
-fn invert_tree(root: Option<Box<Node>>) -> Option<Box<Node>> {
-    match root {
-        None => None,
-        Some(mut node) => {
-            let inverted_left = invert_tree(node.left);
-            let inverted_right = invert_tree(node.right);
-
-            node.left = inverted_right;
-            node.right = inverted_left;
-
-            Some(node)
-        }
+const fn gcd(mut a: u32, mut b: u32) -> u32 {
+    while b != 0 {
+        (a, b) = (b, a.rem_euclid(b));
     }
-}
-
-impl Node{
-	fn invert(&mut self){
-		core::mem::swap(&mut self.left,&mut self.right);
-		if let Some(left)=&mut self.left{
-			left.invert();
-		}
-		if let Some(right)=&mut self.right{
-			right.invert();
-		}
-	}
-	fn display(&self,f:&mut std::fmt::Formatter<'_>,depth:usize)->std::fmt::Result{
-		write!(f,"{{\n")?;
-		let new_depth=depth+1;
-		if let Some(left)=&self.left{
-			write!(f,"{}","\t".repeat(new_depth))?;
-			write!(f,"left:")?;
-			left.display(f,new_depth)?;
-		}
-		if let Some(right)=&self.right{
-			write!(f,"{}","\t".repeat(new_depth))?;
-			write!(f,"right:")?;
-			right.display(f,new_depth)?;
-		}
-		write!(f,"{}","\t".repeat(depth))?;
-		write!(f,"}}\n")?;
-		Ok(())
-	}
-}
-impl std::fmt::Display for Node{
-	fn fmt(&self,f:&mut std::fmt::Formatter<'_>)->std::fmt::Result{
-		self.display(f,0)
-	}
+    a
 }
 
 fn main(){
-	let d=Node{value:4,left:None,right:None};
-	let b=Node{value:2,left:None,right:None};
-	let c_d_=Node{value:3,left:Some(d.into()),right:None};
-	let mut a_bc=Node{value:1,left:Some(b.into()),right:Some(c_d_.into())};
-	println!("{}",a_bc);
-	let a_bc=invert_tree(Some(Box::new(a_bc))).unwrap();
-	println!("{}",a_bc);
+	dbg!(gcd(0,1));
+	dbg!(gcd(1,0));
+	dbg!(gcd(1,1));
+	dbg!(gcd(999999999,9));
 }
