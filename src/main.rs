@@ -1,7 +1,24 @@
-struct Node{
-	left:Option<Box<Node>>,
-	right:Option<Box<Node>>,
+struct Node {
+    value: i32,
+    left: Option<Box<Node>>,
+    right: Option<Box<Node>>,
 }
+
+fn invert_tree(root: Option<Box<Node>>) -> Option<Box<Node>> {
+    match root {
+        None => None,
+        Some(mut node) => {
+            let inverted_left = invert_tree(node.left);
+            let inverted_right = invert_tree(node.right);
+
+            node.left = inverted_right;
+            node.right = inverted_left;
+
+            Some(node)
+        }
+    }
+}
+
 impl Node{
 	fn invert(&mut self){
 		core::mem::swap(&mut self.left,&mut self.right);
@@ -37,11 +54,11 @@ impl std::fmt::Display for Node{
 }
 
 fn main(){
-	let d=Node{left:None,right:None};
-	let b=Node{left:None,right:None};
-	let c_d_=Node{left:Some(d.into()),right:None};
-	let mut a_bc=Node{left:Some(b.into()),right:Some(c_d_.into())};
+	let d=Node{value:4,left:None,right:None};
+	let b=Node{value:2,left:None,right:None};
+	let c_d_=Node{value:3,left:Some(d.into()),right:None};
+	let mut a_bc=Node{value:1,left:Some(b.into()),right:Some(c_d_.into())};
 	println!("{}",a_bc);
-	a_bc.invert();
+	let a_bc=invert_tree(Some(Box::new(a_bc))).unwrap();
 	println!("{}",a_bc);
 }
