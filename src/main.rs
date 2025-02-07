@@ -1,13 +1,11 @@
-const fn gcd(mut a: u32, mut b: u32) -> u32 {
-    while b != 0 {
-        (a, b) = (b, a.rem_euclid(b));
-    }
-    a
-}
+use std::collections::HashSet;
 
 fn main(){
-	dbg!(gcd(0,1));
-	dbg!(gcd(1,0));
-	dbg!(gcd(1,1));
-	dbg!(gcd(999999999,9));
+	let want=[326908,339147,349422,308395,349884,295442,331971,314533,338792,338486,349887,338349,337669,329207,347783,287292,313679,316520];
+	let have=[287292,294998,295442,308395,313679,314533,316520,322435,326908,329207,331971,337669,338349,338486,338792,339147,343029,344241,347783,349422,349884,349886,349887];
+	let a:HashSet<_>=want.into_iter().collect();
+	let b:HashSet<_>=have.into_iter().collect();
+	for &need in a.difference(&b){
+		print!("{need},");
+	}
 }
