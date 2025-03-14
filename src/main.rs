@@ -1,11 +1,22 @@
-use std::collections::HashSet;
+trait Z{
+    fn z(self);
+}
+// function x has generic type Y with trait bound Z
+fn x<Y:Z>(y:Y){
+    y.z()
+}
 
 fn main(){
-	let want=[326908,339147,349422,308395,349884,295442,331971,314533,338792,338486,349887,338349,337669,329207,347783,287292,313679,316520];
-	let have=[287292,294998,295442,308395,313679,314533,316520,322435,326908,329207,331971,337669,338349,338486,338792,339147,343029,344241,347783,349422,349884,349886,349887];
-	let a:HashSet<_>=want.into_iter().collect();
-	let b:HashSet<_>=have.into_iter().collect();
-	for &need in a.difference(&b){
-		print!("{need},");
-	}
+    struct Fella;
+    impl Z for Fella{
+        fn z(self){
+            println!("hello from Y using Z");
+        }
+    }
+    // allowed by trait bounds
+    x(Fella);
+
+    struct Goober;
+    // not allowed, Goober does not implement Z
+    // x(Goober); // compile error
 }
