@@ -1,34 +1,11 @@
 use std::marker::PhantomData;
 
-struct FourLetterWord([u8;4]);
-impl FourLetterWord{
-	const NULL:Self=Self([0;4]);
-	fn new(s:&str)->Option<Self>{
-		if s.len()==4{
-			let mut arr=[0;4];
-			arr.copy_from_slice(s.as_bytes());
-			Some(Self(arr))
-		}else{
-			None
-		}
-	}
-	fn as_str(&self)->&str{
-		// SAFETY: the bytes were constructed with a valid string
-		unsafe{std::str::from_utf8_unchecked(&self.0)}
-	}
-}
-impl std::ops::Deref for FourLetterWord{
-	type Target=str;
-	fn deref(&self)->&Self::Target{
-		self.as_str()
-	}
-}
-
 struct LifetimeHost;
 
+// grow-only list of words
 struct Words<'str>{
 	len:usize,
-	storage:[FourLetterWord;Words::CAP],
+	storage:[String;Words::CAP],
 	_life:PhantomData<&'str LifetimeHost>,
 }
 
@@ -38,7 +15,7 @@ impl<'str> Words<'str>{
 	{
 		Words{
 			len:0,
-			storage:[FourLetterWord::NULL;Self::CAP],
+			storage:std::array::from_fn(|_|String::new()),
 			_life:PhantomData,
 		}
 	}
@@ -53,7 +30,7 @@ impl<'str> Words<'str>{
 	}
 	fn intern(&mut self,s:&str)->&'str str{
 		for word in &self.storage{
-			if word.as_str()==s{
+			if word==s{
 				// SAFETY: who knows
 				return unsafe{std::mem::transmute(word.as_str())};
 			}
@@ -61,7 +38,7 @@ impl<'str> Words<'str>{
 		if self.len==Self::CAP{
 			panic!("Words is full");
 		}
-		let new_word=FourLetterWord::new(s).unwrap();
+		let new_word=s.to_owned();
 		self.storage[self.len]=new_word;
 		let word=self.storage[self.len].as_str();
 		self.len+=1;
@@ -71,19 +48,21 @@ impl<'str> Words<'str>{
 }
 
 fn main(){
-	let (a,b)={
-		let host=LifetimeHost;
-		let mut words=Words::new(&host);
-		let a=words.intern("bruh");
-		let b={
-			// create a scoped reference to words
-			let words=&words;
-			// get a word
-			words.get("bruh").unwrap()
-			// drop the scope reference
-		};
-		(a,b)
+	let host=LifetimeHost;
+	let mut words=Words::new(&host);
+	// with a correct implementation, the following code should be valid:
+	let a=words.intern("bruh");
+	let b={
+		// create a scoped reference to words
+		let words=&words;
+		// get a word
+		words.get("bruh").unwrap()
+		// drop the scope reference
 	};
-	// asjkdnaskjndjwkfaekjnfjklanw
+	println!("{}",a==b);
+
+	// with a correct implementation,
+	// dropping words here should introduce a compile error
+	drop(words);
 	println!("{}",a==b);
 }
