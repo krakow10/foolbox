@@ -29,11 +29,8 @@ impl<'str> Words<'str>{
 		None
 	}
 	fn intern(&mut self,s:&str)->&'str str{
-		for word in &self.storage{
-			if word==s{
-				// SAFETY: who knows
-				return unsafe{std::mem::transmute(word.as_str())};
-			}
+		if let Some(ustr)=self.get(s){
+			return ustr;
 		}
 		if self.len==Self::CAP{
 			panic!("Words is full");
