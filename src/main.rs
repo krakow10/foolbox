@@ -49,6 +49,7 @@ impl<'str> Words<'str>{
 }
 
 fn main(){
+	// TODO: implement the functionality of LifetimeHost directly into Words
 	let lifetime_host=LifetimeHost;
 	let mut words=Words::new(&lifetime_host);
 
