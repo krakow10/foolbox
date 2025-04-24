@@ -9,6 +9,11 @@ struct Words<'str>{
 	_life:PhantomData<&'str LifetimeHost>,
 }
 
+// SAFETY: caller must ensure that 'short lifetime is actualy valid for 'long
+unsafe fn extend_lifetime<'short,'long,T:?Sized>(short:&'short T)->&'long T{
+	std::mem::transmute(short)
+}
+
 impl<'str> Words<'str>{
 	const CAP:usize=64;
 	fn new<'a>(_host:&'a LifetimeHost)->Words<'a>
@@ -22,8 +27,8 @@ impl<'str> Words<'str>{
 	fn get(&self,s:&str)->Option<&'str str>{
 		for word in &self.storage{
 			if word.as_str()==s{
-				// SAFETY: who knows
-				return Some(unsafe{std::mem::transmute(word.as_str())});
+				// SAFETY: I promise not to mutate the strings in the implementation of Words
+				return Some(unsafe{extend_lifetime(word.as_str())});
 			}
 		}
 		None
@@ -35,18 +40,17 @@ impl<'str> Words<'str>{
 		if self.len==Self::CAP{
 			panic!("Words is full");
 		}
-		let new_word=s.to_owned();
-		self.storage[self.len]=new_word;
+		self.storage[self.len]=s.to_owned();
 		let word=self.storage[self.len].as_str();
 		self.len+=1;
-		// SAFETY: who knows
-		unsafe{std::mem::transmute(word)}
+		// SAFETY: I promise not to mutate the strings in the implementation of Words
+		unsafe{extend_lifetime(word)}
 	}
 }
 
 fn main(){
-	let host=LifetimeHost;
-	let mut words=Words::new(&host);
+	let lifetime_host=LifetimeHost;
+	let mut words=Words::new(&lifetime_host);
 
 	// borrow Words mutably
 	let a=words.intern("bruh");
@@ -67,6 +71,6 @@ fn main(){
 	println!("{}",a==b);
 
 	// dropping LifetimeHost gives the desired compile error
-	// drop(host);
+	// drop(lifetime_host);
 	println!("{}",a==b);
 }
