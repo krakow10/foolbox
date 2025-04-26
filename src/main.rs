@@ -1,40 +1,33 @@
 use hash_str::hstr;
-use hash_str::HashStr;
-use hash_str::HashStrHost as LifetimeHost;
-use hash_str::HashStrCache as Words;
+use hash_str::{HashStr,UnhashedStr,HashStrHost,HashStrCache};
 
 fn main(){
-	let bruh_static=hstr!("bruh");
-	let bruh_runtime=&*HashStr::anonymous("bruh".to_owned());
-	// TODO: implement the functionality of LifetimeHost directly into Words
-	let lifetime_host=LifetimeHost::new();
-	let mut words=Words::new();
+	// string internment cache
+	let lifetime_host=HashStrHost::new();
+	let mut cache=HashStrCache::new();
 
-	// borrow Words mutably
-	let a=words.intern(&lifetime_host,"bruh");
-	// drop mutable borrow and borrow immutably
-	let b=words.get("bruh").unwrap();
-	let c=words.get(bruh_static).unwrap();
-	let d=words.get(bruh_runtime).unwrap();
-	// compare both references; this is impossible when
-	// the lifetimes of a and b are derived from
-	// the borrows in .get and .intern
-	// e.g.
-	// fn    get<'a>(&'a     self,s:&str)->Option<&'a str>{
-	// fn intern<'a>(&'a mut self,s:&str)->       &'a str {
-	// instead of the lifetime of the underlying data 'str
-	println!("{}",a==b);
-	println!("{}",a==c);
-	println!("{}",a==d);
-	println!("{}",a==bruh_static);
-	println!("{}",a==bruh_runtime);
+	// string with hash calculated at compile time
+	let hstr_static:&HashStr=hstr!("bruh");
+	// string with hash calculated at run time
+	// anonymous means it does not belong to any HashStrCache
+	let hstr_runtime:&HashStr=&HashStr::anonymous("bruh".to_owned());
 
-	// with a correct implementation,
-	// dropping words here should introduce a compile error
-	drop(words);
-	println!("{}",a==b);
+	// intern string into deduplication cache
+	// does not allocate unless "bruh" is a new string
+	let hstr_interned:&HashStr=cache.intern_with(&lifetime_host,"bruh");
 
-	// dropping LifetimeHost gives the desired compile error
-	// drop(lifetime_host);
-	println!("{}",a==b);
+	let mut map=hash_str::HashStrMap::default();
+	map.insert(hstr_static,1);
+
+	assert_eq!(map.get(hstr_static),Some(&1));
+	assert_eq!(map.get(hstr_runtime),Some(&1));
+	assert_eq!(map.get(hstr_interned),Some(&1));
+	// use Borrow<UnhashedStr> : &HashStr trait bound to index HashMap
+	// without needing to allocate a temporary HashStr
+	assert_eq!(map.get(UnhashedStr::from_ref("bruh")),Some(&1));
+
+	// free cache memory of interned strings
+	// does not affect static or anonymous HashStrs
+	drop(cache);
+	drop(lifetime_host);
 }
