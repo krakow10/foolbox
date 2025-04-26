@@ -1,62 +1,21 @@
-use std::marker::PhantomData;
-
-struct LifetimeHost;
-
-// grow-only list of words
-struct Words<'str>{
-	len:usize,
-	storage:[String;Words::CAP],
-	_life:PhantomData<&'str LifetimeHost>,
-}
-
-// SAFETY: caller must ensure that 'short lifetime is actualy valid for 'long
-unsafe fn extend_lifetime<'short,'long,T:?Sized>(short:&'short T)->&'long T{
-	std::mem::transmute(short)
-}
-
-impl<'str> Words<'str>{
-	const CAP:usize=64;
-	fn new<'a>(_host:&'a LifetimeHost)->Words<'a>
-	{
-		Words{
-			len:0,
-			storage:std::array::from_fn(|_|String::new()),
-			_life:PhantomData,
-		}
-	}
-	fn get(&self,s:&str)->Option<&'str str>{
-		for word in &self.storage{
-			if word.as_str()==s{
-				// SAFETY: I promise not to mutate the strings in the implementation of Words
-				return Some(unsafe{extend_lifetime(word.as_str())});
-			}
-		}
-		None
-	}
-	fn intern(&mut self,s:&str)->&'str str{
-		if let Some(ustr)=self.get(s){
-			return ustr;
-		}
-		if self.len==Self::CAP{
-			panic!("Words is full");
-		}
-		self.storage[self.len]=s.to_owned();
-		let word=self.storage[self.len].as_str();
-		self.len+=1;
-		// SAFETY: I promise not to mutate the strings in the implementation of Words
-		unsafe{extend_lifetime(word)}
-	}
-}
+use hash_str::hstr;
+use hash_str::HashStr;
+use hash_str::HashStrHost as LifetimeHost;
+use hash_str::HashStrCache as Words;
 
 fn main(){
+	let bruh_static=hstr!("bruh");
+	let bruh_runtime=&*HashStr::anonymous("bruh".to_owned());
 	// TODO: implement the functionality of LifetimeHost directly into Words
-	let lifetime_host=LifetimeHost;
-	let mut words=Words::new(&lifetime_host);
+	let lifetime_host=LifetimeHost::new();
+	let mut words=Words::new();
 
 	// borrow Words mutably
-	let a=words.intern("bruh");
+	let a=words.intern(&lifetime_host,"bruh");
 	// drop mutable borrow and borrow immutably
 	let b=words.get("bruh").unwrap();
+	let c=words.get(bruh_static).unwrap();
+	let d=words.get(bruh_runtime).unwrap();
 	// compare both references; this is impossible when
 	// the lifetimes of a and b are derived from
 	// the borrows in .get and .intern
@@ -65,6 +24,10 @@ fn main(){
 	// fn intern<'a>(&'a mut self,s:&str)->       &'a str {
 	// instead of the lifetime of the underlying data 'str
 	println!("{}",a==b);
+	println!("{}",a==c);
+	println!("{}",a==d);
+	println!("{}",a==bruh_static);
+	println!("{}",a==bruh_runtime);
 
 	// with a correct implementation,
 	// dropping words here should introduce a compile error

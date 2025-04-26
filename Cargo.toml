@@ -11,3 +11,4 @@ strip = true
 codegen-units = 1
 
 [dependencies]
+hash_str = { version = "0.0.2", features = ["cache"]}
