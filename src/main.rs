@@ -1,47 +1,21 @@
 use hash_str::hstr;
-use hash_str::{HashStr,UnhashedStr,HashStrHost,HashStrCache};
+use hash_str::HashStr;
 
-fn main(){
-	// string with hash calculated at compile time
-	let hstr_static:&HashStr=hstr!("bruh");
-	// string with hash calculated at run time
-	// anonymous means it does not belong to any HashStrCache
-	let hstr_runtime:&HashStr=&HashStr::anonymous("bruh".to_owned());
+#[allow(dead_code)]
+#[derive(Debug)]
+enum Error{
+	Encode(rmp_serde::encode::Error),
+	Decode(rmp_serde::decode::Error),
+}
 
-	// string internment cache
-	let lifetime_host=HashStrHost::new();
-	let mut cache=HashStrCache::new();
+fn main()->Result<(),Error>{
+	let hstr_static=hstr!("bruh");
 
-	// Intern string into deduplication cache
-	// Does not allocate unless "bruh" is a new string
-	let hstr_interned:&HashStr=cache.intern_with(&lifetime_host,"bruh");
+	let j=rmp_serde::encode::to_vec(hstr_static).map_err(Error::Encode)?;
 
-	// Intern HashStr into deduplication cache
-	// Provided HashStr must outlive the cache, enforced at compile time
-	// Does not allocate a new HashStr.
-	let hstr_interned1:&HashStr=cache.intern(hstr_static);
-	let hstr_interned2:&HashStr=cache.intern(hstr_runtime);
-	let hstr_interned3:&HashStr=cache.intern(hstr_interned);
+	let h2:&HashStr=rmp_serde::decode::from_slice(&j).map_err(Error::Decode)?;
 
-	// all pointers point to the first hstr that was interned
-	assert!(std::ptr::addr_eq(hstr_interned,hstr_interned1));
-	assert!(std::ptr::addr_eq(hstr_interned,hstr_interned2));
-	assert!(std::ptr::addr_eq(hstr_interned,hstr_interned3));
+	assert_eq!(hstr_static,h2);
 
-	let mut map=hash_str::HashStrMap::default();
-	map.insert(hstr_static,1);
-
-	assert_eq!(map.get(hstr_static),Some(&1));
-	assert_eq!(map.get(hstr_runtime),Some(&1));
-	assert_eq!(map.get(hstr_interned),Some(&1));
-	// trait bound `Borrow<UnhashedStr> : &HashStr` allows to UnhashedStr
-	// to index HashMap without needing to allocate a temporary HashStr
-	assert_eq!(map.get(UnhashedStr::from_ref("bruh")),Some(&1));
-
-	// free cache memory of interned strings
-	// does not affect static or anonymous HashStrs
-	drop(cache);
-	drop(lifetime_host);
-
-	// hstr_runtime is dropped after cache
+	Ok(())
 }

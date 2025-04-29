@@ -11,4 +11,5 @@ strip = true
 codegen-units = 1
 
 [dependencies]
-hash_str = { version = "0.0.3", features = ["cache"]}
+hash_str = { version = "0.1.2", features = ["serde"]}
+rmp-serde = "1.3.0"
