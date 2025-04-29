@@ -1,5 +1,5 @@
 use hash_str::hstr;
-use hash_str::HashStr;
+use hash_str::{HashStr,HashStrMap};
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -11,24 +11,28 @@ enum Error{
 #[derive(serde::Serialize,serde::Deserialize)]
 struct Outer<'a>{
 	#[serde(borrow)]
-	field:&'a HashStr,
+	field:HashStrMap<'a,u32>,
 }
 
 fn main()->Result<(),Error>{
-	let hstr_static=hstr!("bruh");
+	let hstr1=hstr!("bruh");
+	let hstr2=hstr!("yo");
+
+	let mut field=HashStrMap::default();
+
+	field.insert(hstr1, 1);
+	field.insert(hstr2, 2);
 
 	let outer=Outer{
-		field:hstr_static,
+		field,
 	};
 
 	let j=rmp_serde::encode::to_vec(&outer).map_err(Error::Encode)?;
 
-	let h2:Outer=rmp_serde::decode::from_slice(&j).map_err(Error::Decode)?;
+	let outer2:Outer=rmp_serde::decode::from_slice(&j).map_err(Error::Decode)?;
 
-	println!("before={}",hstr_static);
-	println!("after={}",h2.field);
-
-	assert_eq!(hstr_static,h2.field);
+	println!("hstr1={:?}",outer2.field.get(hstr1));
+	println!("hstr2={:?}",outer2.field.get(hstr2));
 
 	Ok(())
 }
