@@ -8,14 +8,27 @@ enum Error{
 	Decode(rmp_serde::decode::Error),
 }
 
+#[derive(serde::Serialize,serde::Deserialize)]
+struct Outer<'a>{
+	#[serde(borrow)]
+	field:&'a HashStr,
+}
+
 fn main()->Result<(),Error>{
 	let hstr_static=hstr!("bruh");
 
-	let j=rmp_serde::encode::to_vec(hstr_static).map_err(Error::Encode)?;
+	let outer=Outer{
+		field:hstr_static,
+	};
 
-	let h2:&HashStr=rmp_serde::decode::from_slice(&j).map_err(Error::Decode)?;
+	let j=rmp_serde::encode::to_vec(&outer).map_err(Error::Encode)?;
 
-	assert_eq!(hstr_static,h2);
+	let h2:Outer=rmp_serde::decode::from_slice(&j).map_err(Error::Decode)?;
+
+	println!("before={}",hstr_static);
+	println!("after={}",h2.field);
+
+	assert_eq!(hstr_static,h2.field);
 
 	Ok(())
 }

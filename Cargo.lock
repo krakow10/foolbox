@@ -50,6 +50,7 @@ version = "0.1.0"
 dependencies = [
  "hash_str",
  "rmp-serde",
+ "serde",
 ]
 
 [[package]]
