@@ -11,4 +11,3 @@ strip = true
 codegen-units = 1
 
 [dependencies]
-rbx_binary = "1.0.0"
