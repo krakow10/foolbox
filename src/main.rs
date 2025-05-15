@@ -1,6 +1,7 @@
+fn test<'a,S:Into<&'a str>>(s:S)->&'a str{
+	s.into()
+}
 fn main(){
-	let bo = Box::new(String::from("test"));
-	let string: String = *bo;
-	println!("{string}");
-	println!("{bo}");
+	let s=String::from("test");
+	let t=test(s.as_str());
 }
