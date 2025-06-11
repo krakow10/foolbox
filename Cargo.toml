@@ -11,3 +11,4 @@ strip = true
 codegen-units = 1
 
 [dependencies]
+rustc_version = "0.4.1"
