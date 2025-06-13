@@ -11,4 +11,6 @@ strip = true
 codegen-units = 1
 
 [dependencies]
-chrono = "0.4.41"
+rbx_binary = "1.0.0"
+rbx_dom_weak = "3.0.0"
+rbx_reflection_database = "1.0.3"
