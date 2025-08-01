@@ -1,21 +1,34 @@
-#[repr(C)]
-struct BitHeader {
-    /// 0h: BIT Header Identifier (BMP=0x7FFF/BIT=0xB8FF)
-    id: u16,
-    /// 2h: BIT Header Signature ("BIT\0")
-    signature: [u8; 4],
-    /// 6h: Binary Coded Decimal Version, ex: 0x0100 is 1.00.
-    bcd_version: u16,
-    /// 8h: Size of BIT Header (in bytes)
-    header_size: u8,
-    /// 9h: Size of BIT Tokens (in bytes)
-    token_size: u8,
-    /// 10h: Number of token entries that follow
-    token_entries: u8,
-    /// 11h: BIT Header Checksum
-    checksum: u8,
-}
 fn main() {
-    let a = PmuLookupTableHeader::new(&[1, 2, 3, 4]);
-    dbg!(a);
+	// the value, a "static" meaning it
+	// exists for the entire lifetime of the program, not just this function call,
+	// and always refers to one singular global value.
+	static mut VALUE:i64=0;
+
+	// how many cpu cores do we have to work with?
+	let parallelism = std::thread::available_parallelism().unwrap().get();
+
+	// spawn threads attempting to add one
+	for _ in 0..parallelism/2{
+		std::thread::spawn(||{
+			loop{
+				// this is undefined behaviour!
+				unsafe{(*&mut VALUE)+=1}
+			}
+		});
+	}
+	// spawn threads attempting to subtract one
+	for _ in 0..parallelism/2{
+		std::thread::spawn(||{
+			loop{
+				// this is undefined behaviour!
+				unsafe{(*&mut VALUE)-=1}
+			}
+		});
+	}
+
+	// monitor the chaos every 100ms
+	loop{
+		println!("{}",unsafe{VALUE});
+		std::thread::sleep(std::time::Duration::from_millis(100));
+	}
 }
