@@ -11,3 +11,4 @@ strip = true
 codegen-units = 1
 
 [dependencies]
+indexmap = "2.14.0"
